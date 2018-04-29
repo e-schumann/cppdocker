@@ -243,40 +243,64 @@ RUN apt-get -qq update \
       libgdal-dev=2.2.3* \
       python3-gdal=2.2.3* \
       libassimp-dev=4.1.0* \
-      libode-dev=2:0.14  
+      libode-dev=2:0.14*  
           
 # ----------------------------------------------------
 # -- Build Open Motion Planning Library
 # ----------------------------------------------------
 
+#RUN git clone https://github.com/danfis/libccd.git \
+#    && cd libccd && mkdir build && cd build \
+#    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+#    && make -j 4 && make install \
+#    && cd ../.. && rm -rf libccd \ 
+#    && git clone https://github.com/flexible-collision-library/fcl.git \
+#    && cd fcl && git checkout 0.5.0 \
+#    && mkdir build && cd build \
+#    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+#    && make -j 4 && make install \
+#    && cd ../.. && rm -rf fcl \
+#    && git clone https://github.com/OctoMap/octomap.git \
+#    && cd octomap && mkdir build && cd build \
+#    && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+#    && make -j 4 && make install \
+#    && cd ../.. && rm -rf octomap \
+#    && git clone https://github.com/ompl/omplapp.git \
+#    && cd omplapp && git checkout 1.3.1\
+#    && git clone https://github.com/ompl/ompl.git \
+#    && cd ompl && git checkout 1.3.1\
+#    && mkdir build && cd build \
+#    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+#    && make -j 4 && make install \
+#    && cd ../.. \
+#    && mkdir build && cd build \
+#    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+#    && make -j 4 && make install \
+#    && cd ../.. && rm -rf omplapp
+
 RUN git clone https://github.com/danfis/libccd.git \
     && cd libccd && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. && rm -rf libccd \
-    && git clone https://github.com/OctoMap/octomap.git \
-    && cd octomap && mkdir build && cd build \
-    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
-    && cd ../.. && rm -rf octomap \
+    && cd ../.. && rm -rf libccd \ 
     && git clone https://github.com/flexible-collision-library/fcl.git \
     && cd fcl && git checkout 0.5.0 \
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
     && cd ../.. && rm -rf fcl \
-    && git clone https://github.com/ompl/omplapp.git \
-    && cd omplapp && git checkout 1.3.1\
+    && git clone https://github.com/OctoMap/octomap.git \
+    && cd octomap && mkdir build && cd build \
+    && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+    && make -j 4 && make install \
+    && cd ../.. && rm -rf octomap \
     && git clone https://github.com/ompl/ompl.git \
     && cd ompl && git checkout 1.3.1\
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. \
-    && mkdir build && cd build \
-    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
-    && cd ../.. && rm -rf omplapp
+    && cd ../.. && rm -rf ompl
+
 
 # ----------------------------------------------------
 # -- Build Google Flatbuffers
@@ -290,7 +314,20 @@ RUN git clone https://github.com/google/flatbuffers.git \
     && make -j 4 \
     && make install \
     && cd ../.. && rm -rf flatbuffers
-    
+  
+# ----------------------------------------------------
+# -- Build Point Cloud Library
+# ----------------------------------------------------
+      
+RUN git clone https://github.com/PointCloudLibrary/pcl.git \
+    && cd pcl \
+    && git checkout pcl-1.8.1 \
+    && mkdir build && cd build \ 
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+    && make -j 4 \
+    && make install \
+    && cd ../.. && rm -rf pcl
+        
 CMD bash    
 
 #    && groupadd 1000 -g 1000 \

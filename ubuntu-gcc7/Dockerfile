@@ -25,7 +25,6 @@ RUN apt-get -qq update \
        libbz2-dev=1.0.6* \
        zlib1g-dev=1:1.2.11.* \
        nasm=2.13.* \
-       nproc=0.5.1* \
        dh-autoreconf=17 \
        valgrind=1:3.13.* \
        ninja-build=1.8.2* \

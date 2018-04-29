@@ -83,7 +83,7 @@ RUN git clone https://github.com/edenhill/librdkafka.git \
     && ./configure --prefix=/usr/local \
     && make -j 4\
     && make install \
-    && cd .. && rm -rf ./librdkafka
+    && cd .. && rm -rf ./librdkafka && ldconfig
 
 # ----------------------------------------------------
 # -- Build C++ Bindings of Kafka  
@@ -97,7 +97,7 @@ RUN git clone https://github.com/mfontanini/cppkafka.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf cppkafka
+    && cd ../.. && rm -rf cppkafka && ldconfig
 
 # ----------------------------------------------------
 # -- Build Logging Library spdlog  
@@ -111,7 +111,7 @@ RUN git clone https://github.com/gabime/spdlog.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf spdlog
+    && cd ../.. && rm -rf spdlog && ldconfig
 
 # ----------------------------------------------------
 # -- Build C++ YAML Parser  
@@ -125,7 +125,7 @@ RUN git clone https://github.com/jbeder/yaml-cpp.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf yaml-cpp
+    && cd ../.. && rm -rf yaml-cpp && ldconfig
 
 # ----------------------------------------------------
 # -- Build Google Test And Mock 
@@ -139,7 +139,7 @@ RUN git clone https://github.com/google/googletest.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf googletest
+    && cd ../.. && rm -rf googletest && ldconfig
 
 # ----------------------------------------------------
 # -- Install Oracle Java8 For Google Bazel  
@@ -184,7 +184,7 @@ RUN git clone https://github.com/CGAL/cgal.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ ../.. \
     && make -j 4 \
     && make install \
-    && cd ../../.. && rm -rf cgal 
+    && cd ../../.. && rm -rf cgal && ldconfig
 
 # ----------------------------------------------------
 # -- Build Python graph-tool
@@ -202,7 +202,7 @@ RUN git clone https://git.skewed.de/count0/graph-tool.git \
     && ./configure --prefix=/usr/local \
     && make -j 4 \
     && make install \
-    && cd .. && rm -rf graph-tool
+    && cd .. && rm -rf graph-tool && ldconfig
 
 # ----------------------------------------------------
 # -- Build C++ Dependency Injection Library Google Fruit
@@ -215,7 +215,7 @@ RUN git clone https://github.com/google/fruit.git \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf fruit
+    && cd ../.. && rm -rf fruit && ldconfig
 
 # ----------------------------------------------------
 # -- Build C++ Vector Library Eigen
@@ -282,24 +282,24 @@ RUN git clone https://github.com/danfis/libccd.git \
     && cd libccd && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. && rm -rf libccd \ 
+    && cd ../.. && rm -rf libccd && ldconfig \ 
     && git clone https://github.com/flexible-collision-library/fcl.git \
     && cd fcl && git checkout 0.5.0 \
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. && rm -rf fcl \
+    && cd ../.. && rm -rf fcl && ldconfig \
     && git clone https://github.com/OctoMap/octomap.git \
     && cd octomap && mkdir build && cd build \
     && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. && rm -rf octomap \
+    && cd ../.. && rm -rf octomap && ldconfig \
     && git clone https://github.com/ompl/ompl.git \
     && cd ompl && git checkout 1.3.1\
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 && make install \
-    && cd ../.. && rm -rf ompl
+    && cd ../.. && rm -rf ompl && ldconfig
 
 
 # ----------------------------------------------------
@@ -318,15 +318,19 @@ RUN git clone https://github.com/google/flatbuffers.git \
 # ----------------------------------------------------
 # -- Build Point Cloud Library
 # ----------------------------------------------------
-      
-RUN git clone https://github.com/PointCloudLibrary/pcl.git \
+RUN apt-get -qq update \ 
+    && apt-get -qq install -y --no-install-recommends \
+      libflann-dev=1.9.1* \  
+      libpcap-dev=1.8.1* \   
+      freeglut3-dev=2.8.1* \
+    && git clone https://github.com/PointCloudLibrary/pcl.git \
     && cd pcl \
     && git checkout pcl-1.8.1 \
     && mkdir build && cd build \ 
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j 4 \
     && make install \
-    && cd ../.. && rm -rf pcl
+    && cd ../.. && rm -rf pcl && ldconfig
         
 CMD bash    
 

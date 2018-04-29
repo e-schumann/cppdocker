@@ -25,6 +25,7 @@ RUN apt-get -qq update \
        libbz2-dev=1.0.6* \
        zlib1g-dev=1:1.2.11.* \
        nasm=2.13.* \
+       nproc=0.5.1* \
        dh-autoreconf=17 \
        valgrind=1:3.13.* \
        ninja-build=1.8.2* \
@@ -70,7 +71,7 @@ RUN wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_$
     && rm boost_${BOOST_DIR}.tar.gz \
     && cd boost_${BOOST_DIR} \
     && ./bootstrap.sh \
-    && ./b2 --prefix=/usr -j 4 link=shared runtime-link=shared install \
+    && ./b2 --prefix=/usr -j $(nproc) link=shared runtime-link=shared install \
     && cd .. && rm -rf boost_${BOOST_DIR} && ldconfig
 
 # ----------------------------------------------------
@@ -81,7 +82,7 @@ RUN git clone https://github.com/edenhill/librdkafka.git \
     && cd librdkafka \
     && git checkout 13befa7 \
     && ./configure --prefix=/usr/local \
-    && make -j 4\
+    && make -j $(nproc)\
     && make install \
     && cd .. && rm -rf ./librdkafka && ldconfig
 
@@ -95,7 +96,7 @@ RUN git clone https://github.com/mfontanini/cppkafka.git \
     && git checkout ae74814 \
     && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf cppkafka && ldconfig
 
@@ -109,7 +110,7 @@ RUN git clone https://github.com/gabime/spdlog.git \
     && git checkout 71e93a4f2d52fb9f9dafdeea7386bf0c780981e3 \
     && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf spdlog && ldconfig
 
@@ -123,7 +124,7 @@ RUN git clone https://github.com/jbeder/yaml-cpp.git \
     && git checkout 124ae4760062e2f5827a6238c122ccbf66eb4e6e \
     && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf yaml-cpp && ldconfig
 
@@ -137,7 +138,7 @@ RUN git clone https://github.com/google/googletest.git \
     && git checkout dc043e1ca6bd509a92452ed54e817b6979869372 \
     && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf googletest && ldconfig
 
@@ -182,7 +183,7 @@ RUN git clone https://github.com/CGAL/cgal.git \
     && git checkout releases/CGAL-4.12 \
     && cd build/release \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ ../.. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../../.. && rm -rf cgal && ldconfig
 
@@ -200,7 +201,7 @@ RUN git clone https://git.skewed.de/count0/graph-tool.git \
     && git checkout release-2.26 \
     && ./autogen.sh \
     && ./configure --prefix=/usr/local \
-    && make -j 4 \
+    && make -j 2 \
     && make install \
     && cd .. && rm -rf graph-tool && ldconfig
 
@@ -213,7 +214,7 @@ RUN git clone https://github.com/google/fruit.git \
     && git checkout v3.1.1 \
     && mkdir build && cd build \ 
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf fruit && ldconfig
 
@@ -226,12 +227,15 @@ RUN git clone https://github.com/eigenteam/eigen-git-mirror.git eigen \
     && git checkout 3.3.4 \
     && mkdir build && cd build \ 
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf eigen       
 
 # ----------------------------------------------------
-# -- Install Sqlite Spatialite GDAL
+# -- Install Sqlite Spatialite GDAL 
+# better:https://trac.osgeo.org/gdal/wiki/BuildHints
+# pip install shapely etc
+# pip install python gdal ?
 # ----------------------------------------------------
 
 RUN apt-get -qq update \ 
@@ -252,18 +256,18 @@ RUN apt-get -qq update \
 #RUN git clone https://github.com/danfis/libccd.git \
 #    && cd libccd && mkdir build && cd build \
 #    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-#    && make -j 4 && make install \
+#    && make -j $(nproc) && make install \
 #    && cd ../.. && rm -rf libccd \ 
 #    && git clone https://github.com/flexible-collision-library/fcl.git \
 #    && cd fcl && git checkout 0.5.0 \
 #    && mkdir build && cd build \
 #    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-#    && make -j 4 && make install \
+#    && make -j $(nproc) && make install \
 #    && cd ../.. && rm -rf fcl \
 #    && git clone https://github.com/OctoMap/octomap.git \
 #    && cd octomap && mkdir build && cd build \
 #    && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-#    && make -j 4 && make install \
+#    && make -j $(nproc) && make install \
 #    && cd ../.. && rm -rf octomap \
 #    && git clone https://github.com/ompl/omplapp.git \
 #    && cd omplapp && git checkout 1.3.1\
@@ -271,34 +275,34 @@ RUN apt-get -qq update \
 #    && cd ompl && git checkout 1.3.1\
 #    && mkdir build && cd build \
 #    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-#    && make -j 4 && make install \
+#    && make -j $(nproc) && make install \
 #    && cd ../.. \
 #    && mkdir build && cd build \
 #    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-#    && make -j 4 && make install \
+#    && make -j $(nproc) && make install \
 #    && cd ../.. && rm -rf omplapp
 
 RUN git clone https://github.com/danfis/libccd.git \
     && cd libccd && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
+    && make -j $(nproc) && make install \
     && cd ../.. && rm -rf libccd && ldconfig \ 
     && git clone https://github.com/flexible-collision-library/fcl.git \
     && cd fcl && git checkout 0.5.0 \
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
-    && cd ../.. && rm -rf fcl && ldconfig \
+    && make -j $(nproc) && make install \
+    && cd ../.. && rm -rf fcl \
     && git clone https://github.com/OctoMap/octomap.git \
     && cd octomap && mkdir build && cd build \
     && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
+    && make -j $(nproc) && make install \
     && cd ../.. && rm -rf octomap && ldconfig \
     && git clone https://github.com/ompl/ompl.git \
     && cd ompl && git checkout 1.3.1\
     && mkdir build && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 && make install \
+    && make -j $(nproc) && make install \
     && cd ../.. && rm -rf ompl && ldconfig
 
 
@@ -311,7 +315,7 @@ RUN git clone https://github.com/google/flatbuffers.git \
     && git checkout v1.9.0 \
     && mkdir build && cd build \ 
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf flatbuffers
   
@@ -328,7 +332,7 @@ RUN apt-get -qq update \
     && git checkout pcl-1.8.1 \
     && mkdir build && cd build \ 
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
-    && make -j 4 \
+    && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf pcl && ldconfig
         

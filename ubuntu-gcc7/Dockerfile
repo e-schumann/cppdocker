@@ -64,13 +64,13 @@ RUN apt-get -qq update \
 ARG BOOST_VERSION=1.67.0
 ARG BOOST_DIR=1_67_0
 ENV BOOST_VERSION=${BOOST_VERSION}
-ENV BOOST_ROOT=/usr/include/boost
+ENV BOOST_ROOT=/usr/local/include/boost
 RUN wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_DIR}.tar.gz \
     && tar xfz boost_${BOOST_DIR}.tar.gz \
     && rm boost_${BOOST_DIR}.tar.gz \
     && cd boost_${BOOST_DIR} \
     && ./bootstrap.sh \
-    && ./b2 --prefix=/usr -j $(nproc) link=shared runtime-link=shared install \
+    && ./b2 --prefix=/usr/local -j $(nproc) link=shared runtime-link=shared install \
     && cd .. && rm -rf boost_${BOOST_DIR} && ldconfig
 
 # ----------------------------------------------------

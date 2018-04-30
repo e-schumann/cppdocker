@@ -237,19 +237,20 @@ RUN git clone https://github.com/eigenteam/eigen-git-mirror.git eigen \
 # pip install python gdal ?
 # ----------------------------------------------------
 
+#RUN apt-get -qq update \ 
+#    && apt-get -qq install -y --no-install-recommends \
+#      libspatialite-dev=4.3.0a* \
+#      spatialite-bin=4.3.0* \
+#      python-pyspatialite=3.0.1* \
+#      libassimp-dev=4.1.0* \
+#      libode-dev=2:0.14*  
 RUN apt-get -qq update \ 
     && apt-get -qq install -y --no-install-recommends \
-      libspatialite-dev=4.3.0a* \
-      spatialite-bin=4.3.0* \
-      python-pyspatialite=3.0.1* \
-      gdal-bin=2.2.3* \
-      libgdal-dev=2.2.3* \
-      python3-gdal=2.2.3* \
       libassimp-dev=4.1.0* \
-      libode-dev=2:0.14*  
-          
+      libode-dev=2:0.14*            
 # ----------------------------------------------------
 # -- Build Open Motion Planning Library
+# -- octomap not C++17 compliant because of collision with std::byte
 # ----------------------------------------------------
 
 #RUN git clone https://github.com/danfis/libccd.git \
@@ -319,7 +320,7 @@ RUN git clone https://github.com/google/flatbuffers.git \
     && cd ../.. && rm -rf flatbuffers
   
 # ----------------------------------------------------
-# -- Build Point Cloud Library
+# -- Build Point Cloud Library (not C++17 compliant because of throw specifications)
 # ----------------------------------------------------
 RUN apt-get -qq update \ 
     && apt-get -qq install -y --no-install-recommends \
@@ -330,11 +331,134 @@ RUN apt-get -qq update \
     && cd pcl \
     && git checkout pcl-1.8.1 \
     && mkdir build && cd build \ 
-    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+    && CXXFLAGS="-std=c++14" cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
     && make -j $(nproc) \
     && make install \
     && cd ../.. && rm -rf pcl && ldconfig
-        
+
+# ----------------------------------------------------
+# -- Build sqlite
+# ----------------------------------------------------
+
+RUN wget https://www.sqlite.org/2018/sqlite-autoconf-3230100.tar.gz \
+    && tar xfz sqlite-autoconf-3230100.tar.gz \
+    && rm sqlite-autoconf-3230100.tar.gz \
+    && cd sqlite-autoconf-3230100 \
+    && ./configure --prefix=/usr/local \
+    && make -j $(nproc) \
+    && make install \
+    && cd .. && rm -rf sqlite-autoconf-3230100 && ldconfig
+
+# ----------------------------------------------------
+# -- Build spatialite
+# ----------------------------------------------------
+RUN apt-get -qq update \ 
+    && apt-get -qq install -y --no-install-recommends \
+      libproj-dev=4.9.3* \
+      libfreexl-dev=1.0.5* \
+      libgeos++-dev=3.6.2* \
+      libxml2-dev=2.9.4* \
+      libqhull-dev=2015.2* \
+    && wget http://www.gaia-gis.it/gaia-sins/libspatialite-4.3.0a.tar.gz \
+    && tar xfz libspatialite-4.3.0a.tar.gz \
+    && rm libspatialite-4.3.0a.tar.gz \
+    && cd libspatialite-4.3.0a \
+    && ./configure --prefix=/usr/local \
+    && make -j $(nproc) \
+    && make install \
+    && cd .. && rm -rf libspatialite-4.3.0a && ldconfig
+
+# ----------------------------------------------------
+# -- Build GDAL
+# ----------------------------------------------------
+
+RUN wget http://download.osgeo.org/gdal/2.2.4/gdal-2.2.4.tar.gz \
+    && tar xfz gdal-2.2.4.tar.gz \
+    && rm gdal-2.2.4.tar.gz \
+    && cd gdal-2.2.4 \
+    && ./configure --prefix=/usr/local \
+        --with-geos \
+        --with-geotiff=internal \
+        --with-hide-internal-symbols \
+        --with-libtiff=internal \
+        --with-libz=internal \
+        --with-threads \
+        --without-bsb \
+        --without-cfitsio \
+        --without-cryptopp \
+        --without-curl \
+        --without-dwgdirect \
+        --without-ecw \
+        --without-expat \
+        --without-fme \
+        --with-freexl \
+        --without-gif \
+        --without-gif \
+        --without-gnm \
+        --without-grass \
+        --without-grib \
+        --without-hdf4 \
+        --without-hdf5 \
+        --without-idb \
+        --without-ingres \
+        --without-jasper \
+        --without-jp2mrsid \
+        --without-jpeg \
+        --without-kakadu \
+        --without-libgrass \
+        --without-libkml \
+        --without-libtool \
+        --without-mrf \
+        --without-mrsid \
+        --without-mysql \
+        --without-netcdf \
+        --without-odbc \
+        --without-ogdi \
+        --without-openjpeg \
+        --without-pcidsk \
+        --without-pcraster \
+        --without-pcre \
+        --without-perl \
+        --without-pg \
+        --without-php \
+        --without-png \
+        --with-python \
+        --with-qhull \
+        --without-sde \
+        --with-sqlite3 \
+        --without-webp \
+        --without-xerces \
+        --without-xml2 \   
+    && make -j $(nproc) \
+    && make install \
+    && cd .. && rm -rf gdal-2.2.4 && ldconfig
+
+# ----------------------------------------------------
+# -- Install Python fiona & shapely
+# ----------------------------------------------------
+
+RUN pip install -q --no-cache-dir shapely fiona
+
+# ----------------------------------------------------
+# -- Build fcppt
+# ----------------------------------------------------
+RUN git clone https://github.com/edouarda/brigand.git \
+    && cd brigand \
+    && mkdir build && cd build \ 
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+    && make -j $(nproc) \
+    && make install \
+    && cd ../.. && rm -rf brigand
+
+RUN git clone https://github.com/freundlich/fcppt.git \
+    && cd fcppt \
+    && git checkout 2.7.0 \
+    && mkdir build && cd build \ 
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local/ .. \
+    && make -j $(nproc) \
+    && make install \
+    && cd ../.. && rm -rf fcppt
+
 CMD bash    
 
 #    && groupadd 1000 -g 1000 \

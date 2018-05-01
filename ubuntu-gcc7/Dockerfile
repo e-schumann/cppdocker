@@ -461,12 +461,3 @@ RUN git clone https://github.com/freundlich/fcppt.git \
 
 CMD bash    
 
-#    && groupadd 1000 -g 1000 \
-#    && useradd -ms /bin/bash thor -g 1001 -G 1000,2000,999 \
-#    && printf "thor:thor" | chpasswd \
-#    && adduser thor thor \
-#    && printf "thor ALL= NOPASSWD: ALL\\n" >> /etc/sudoers
-
-#USER thor
-#WORKDIR /home/thor
-# RUN mkdir -p /home/thor/.conan

@@ -1,0 +1,5 @@
+[cxx]
+    cxx = /usr/bin/g++
+    ld = /usr/bin/g++
+[general_cxx]
+    cxxflags = -std=c++17 -Wall -pedantic

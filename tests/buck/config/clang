@@ -1,0 +1,10 @@
+@config/common
+--config
+cxx.cxx=/usr/bin/clang++
+--config
+cxx.ld=/usr/bin/clang++
+--config
+cxx.cxxcpp=/usr/bin/clang++
+--config
+cxx.cxxflags=$(config general_cxx.cxxflags) -O0 -g
+

@@ -1,0 +1,9 @@
+@config/common
+--config
+cxx.cxx=/usr/bin/g++
+--config
+cxx.ld=/usr/bin/g++
+--config
+cxx.cxxcpp=/usr/bin/g++
+--config
+cxx.cxxflags=$(config general_cxx.cxxflags) -O3

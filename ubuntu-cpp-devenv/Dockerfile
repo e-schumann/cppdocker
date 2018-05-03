@@ -45,12 +45,12 @@ RUN apt-get -qq update \
     && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 100 \
     && update-alternatives --install /usr/bin/cc cc /usr/bin/clang 50 \
     && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 50 \    
-    && update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld 100 \
+    && update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-6.0 100 \
     && update-alternatives --install /usr/bin/ld ld /usr/bin/ld.gold 50 \
     && update-alternatives --install /usr/bin/ld ld /usr/bin/ld.bfd 10 \    
     && update-alternatives --set c++ /usr/bin/g++-7 \
     && update-alternatives --set cc /usr/bin/gcc \
-    && update-alternatives --set ld /usr/bin/ld.lld \
+    && update-alternatives --set ld /usr/bin/ld.lld-6.0 \
     && rm -rf /var/lib/apt/lists/* \
     && wget --no-check-certificate --quiet https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
@@ -81,7 +81,13 @@ CMD [ "/bin/bash" ]
 # https://buckbuild.com/command/common_parameters.html
 # https://github.com/facebookexperimental/buckit 
 # https://www.youtube.com/watch?v=h8UoYG4dvH8
-#
+# https://hackernoon.com/how-to-create-a-buck-based-c-c-project-38b85273d6a6
+# https://hackernoon.com/lessons-learned-from-porting-300-projects-to-buck-build-ff6463b65142
+# buck build @config/gcc //:demo#strip-all
+# ./buck-out/gen/demo
+# https://buckaroo.readthedocs.io/en/latest/installation.html#linux
+# https://buckaroo.pm/
+# 
 # Docker & General Build Stuff
 # ----------------------------------
 # https://stackoverflow.com/questions/26103966/how-can-i-statically-link-standard-library-to-my-c-program
@@ -89,6 +95,19 @@ CMD [ "/bin/bash" ]
 # https://gist.github.com/seal789ie/978e30769211311effbb Docker ZSH Prezto
 # https://lld.llvm.org/ LLVM Linker
 # https://gist.github.com/daniel-j-h/ed3bf9e5cb458b012b5a Linker Selection
+# https://hackernoon.com/create-a-private-local-docker-registry-5c79ce912620 Private Docker Registry
+# https://medium.com/@valgaze/from-zero-to-a-private-docker-registry-b42abad46fef Private Docker Registry in AWS
+# https://docs.docker.com/registry/deploying/#more-advanced-authentication
+# https://robots.thoughtbot.com/keeping-a-github-fork-updated
+# 
+# docker image ls
+# docker system prune 
+# docker images -f "dangling=true"
+# docker build -t ubuntu-cpp-devenv:v1 .
+# docker run -i -t ubuntu:12.04 /bin/bash
+# docker run -i -t 8dbd9e392a96 /bin/bash
+# docker run -t -i -v d:/projects/buck_tests:/develop ubuntu-cpp-devenv:v1 /bin/bash
+#
 # -----------------------------------------------------------------------------------------------------------
 
 # RUN git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"

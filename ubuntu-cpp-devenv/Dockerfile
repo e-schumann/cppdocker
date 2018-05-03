@@ -22,14 +22,14 @@ RUN apt-get -qq update \
        clang-tidy=1:6.0* \
        lld=1:6.0* \
        openjdk-8-jdk=8u162* \
-       openjdk-8-jre-headless=8u162* \
-       ant=1.10* \
        libmpfr-dev=4.0.* \
        libmpc-dev=1.1.* \
        libc6-dev=2.27* \
        libsasl2-dev=2.1.27* \
        libbz2-dev=1.0.6* \
        zlib1g-dev=1:1.2.11.* \
+       zip=3.0* \
+       unzip=6.0* \
        nasm=2.13.* \
        dh-autoreconf=17 \
        valgrind=1:3.13.* \
@@ -57,19 +57,14 @@ RUN apt-get -qq update \
     && rm get-pip.py \
     && pip install -q -U pip \
     && pip install -q --no-cache-dir numpy scipy matplotlib pandas nose shapely fiona \
-    && git clone https://github.com/facebook/watchman.git \
-    && cd watchman \
-    && git checkout v4.9.0 \
-    && ./autogen.sh \
-    && ./configure \
-    && make -j $(nproc) && make install \
-    && cd .. && rm -rf watchman \
-    && git clone https://github.com/facebook/buck.git \
-    && cd buck && ant \
-    && ./bin/buck build --show-output buck \
-    && buck-out/gen/programs/buck.pex --help 
+    && wget --no-check-certificate https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-dist.zip \
+    && unzip bazel-0.13.0-dist.zip -d bazel \
+    && cd bazel \
+    && bash ./compile.sh \
+    && cp output/bazel /usr/local/bin \
+    && cd .. && rm -rf bazel
 
-ENV PATH="${PWD}/buck/bin:${PATH}"
+# ENV PATH="${PWD}/buck/bin:${PATH}"
 
 # Start from a Bash prompt
 CMD [ "/bin/bash" ]    
@@ -85,6 +80,7 @@ CMD [ "/bin/bash" ]
 # https://hackernoon.com/lessons-learned-from-porting-300-projects-to-buck-build-ff6463b65142
 # buck build @config/gcc //:demo#strip-all
 # ./buck-out/gen/demo
+# export NO_BUCKD=1  # Don't use daemon e.g. because it fails to start
 # https://buckaroo.readthedocs.io/en/latest/installation.html#linux
 # https://buckaroo.pm/
 # 
@@ -107,7 +103,9 @@ CMD [ "/bin/bash" ]
 # docker run -i -t ubuntu:12.04 /bin/bash
 # docker run -i -t 8dbd9e392a96 /bin/bash
 # docker run -t -i -v d:/projects/buck_tests:/develop ubuntu-cpp-devenv:v1 /bin/bash
-#
+# 
+# https://help.github.com/articles/fork-a-repo/
+# https://stackoverflow.com/questions/18404272/running-ssh-agent-when-starting-git-bash-on-windows
 # -----------------------------------------------------------------------------------------------------------
 
 # RUN git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"

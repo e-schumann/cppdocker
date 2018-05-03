@@ -1,5 +1,6 @@
 [cxx]
     cxx = /usr/bin/g++
     ld = /usr/bin/g++
+    gtest_dep = //third-party/googletest:gtest
 [general_cxx]
     cxxflags = -std=c++17 -Wall -pedantic

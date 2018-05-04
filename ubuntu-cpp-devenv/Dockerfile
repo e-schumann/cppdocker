@@ -1,7 +1,7 @@
 ARG tag=18.04
 FROM ubuntu:${tag}
 
-LABEL maintainer="Eike Schumann <eike.schumann@gmx.de>"
+LABEL maintainer="E. Schumann <e-schumann@online.de>"
 
 RUN apt-get -qq update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends \
@@ -57,7 +57,7 @@ RUN apt-get -qq update \
     && rm get-pip.py \
     && pip install -q -U pip \
     && pip install -q --no-cache-dir numpy scipy matplotlib pandas nose shapely fiona \
-    && wget --no-check-certificate https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-dist.zip \
+    && wget --no-check-certificate --quiet https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-dist.zip \
     && unzip bazel-0.13.0-dist.zip -d bazel \
     && cd bazel \
     && bash ./compile.sh \
@@ -83,8 +83,10 @@ CMD [ "/bin/bash" ]
 # export NO_BUCKD=1  # Don't use daemon e.g. because it fails to start
 # https://buckaroo.readthedocs.io/en/latest/installation.html#linux
 # https://buckaroo.pm/
-# 
-# Docker & General Build Stuff
+# https://stackoverflow.com/questions/40995131/what-is-the-best-way-to-integrate-a-cmake-project-into-buck# Docker & General Build Stuff
+# https://stackoverflow.com/questions/41142890/can-i-specify-git-urls-as-dependencies-in-buck
+# https://github.com/njlr/buck-cells-example <---- This one is important
+#  
 # ----------------------------------
 # https://stackoverflow.com/questions/26103966/how-can-i-statically-link-standard-library-to-my-c-program
 # https://medium.com/kokster/fun-with-multi-stage-dockerfiles-7da7f11403d2
@@ -104,6 +106,7 @@ CMD [ "/bin/bash" ]
 # docker run -i -t 8dbd9e392a96 /bin/bash
 # docker run -t -i -v d:/projects/buck_tests:/develop ubuntu-cpp-devenv:v1 /bin/bash
 # 
+# http://hanxue-it.blogspot.com/2017/11/git-submodule-how-to-pull-update-and-delete-linked-git-repositories.html
 # https://help.github.com/articles/fork-a-repo/
 # https://stackoverflow.com/questions/18404272/running-ssh-agent-when-starting-git-bash-on-windows
 # -----------------------------------------------------------------------------------------------------------

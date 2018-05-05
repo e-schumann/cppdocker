@@ -11,6 +11,9 @@ RUN apt-get -qq update \
        wget=1.19.* \
        zip=3.0* \
        unzip=6.0* \
+       ca-certificates=20180409 \  
+    && update-alternatives --install /usr/bin/python python /usr/bin/python2.7 100 \     
+    && update-alternatives --set python /usr/bin/python2.7 \
     && wget --no-check-certificate --quiet https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-dist.zip \
     && unzip bazel-0.13.0-dist.zip -d bazel \
     && cd bazel \
@@ -42,13 +45,10 @@ RUN apt-get -qq update \
        nasm=2.13.* \
        dh-autoreconf=17 \
        valgrind=1:3.13.* \
-       inotify-tools=3.14* \
-       libinotifytools0-dev=3.14* \
-       ninja-build=1.8.2* \
        libffi-dev=3.2.* \
        libssl-dev=1.1.0* \
-       pkg-config=0.29.1-0ubuntu2 \
-       ca-certificates=20180409 \
+       pkg-config=0.29.1* \
+       python2.7=2.7.15* \       
     && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 100 \

@@ -19,12 +19,9 @@ RUN apt-get -qq update \
     && cd bazel \
     && bash ./compile.sh \
     && cp output/bazel /usr/local/bin \
-    && cd .. && rm -rf bazel
-    
-RUN apt-get -qq update \
+    && cd .. && rm -rf bazel \
+    && apt-get -qq update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends \
-       software-properties-common=0.96.24.* \
-       sudo=1.8.* \
        binutils=2.30* \
        curl=7.58.* \
        git=1:2.17.* \
@@ -48,7 +45,7 @@ RUN apt-get -qq update \
        libffi-dev=3.2.* \
        libssl-dev=1.1.0* \
        pkg-config=0.29.1* \
-       python2.7=2.7.15* \       
+       python2.7-dev=2.7.15* \       
     && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 100 \

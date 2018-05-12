@@ -23,8 +23,6 @@ RUN apt-get -qq update \
     
 RUN apt-get -qq update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends \
-       software-properties-common=0.96.24.* \
-       sudo=1.8.* \
        binutils=2.30* \
        curl=7.58.* \
        git=1:2.17.* \
@@ -48,7 +46,7 @@ RUN apt-get -qq update \
        libffi-dev=3.2.* \
        libssl-dev=1.1.0* \
        pkg-config=0.29.1* \
-       python2.7=2.7.15* \       
+       python2.7-dev=2.7.15* \       
     && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-7 100 \
     && update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 100 \
@@ -64,8 +62,8 @@ RUN apt-get -qq update \
     && wget --no-check-certificate --quiet https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
     && rm get-pip.py \
-    && pip install -q -U pip \
-    && pip install -q --no-cache-dir numpy scipy matplotlib pandas nose shapely fiona
+    && pip install -U pip \
+    && pip install --no-cache-dir numpy scipy matplotlib pandas nose shapely fiona
 
 # Start from a Bash prompt
 CMD [ "/bin/bash" ]    

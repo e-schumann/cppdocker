@@ -19,9 +19,8 @@ RUN apt-get -qq update \
     && cd bazel \
     && bash ./compile.sh \
     && cp output/bazel /usr/local/bin \
-    && cd .. && rm -rf bazel
-    
-RUN apt-get -qq update \
+    && cd .. && rm -rf bazel \
+    && apt-get -qq update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends \
        binutils=2.30* \
        curl=7.58.* \
